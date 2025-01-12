@@ -30,12 +30,25 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect.y = y
 
 yellow_spaceship = Spaceship(y_ss,200,400)
+health_bar_ys = 10
+y_bullets = []
 
 red_spaceship = Spaceship(r_ss,600,400)
+health_bar_rs = 10
+r_bullets = []
 
 The_sprites = pygame.sprite.Group()
 The_sprites.add(yellow_spaceship)
 The_sprites.add(red_spaceship)
+
+
+def handel_bullets():
+    for y_bullet in y_bullets:
+        pygame.draw.rect(screen,"yellow",y_bullet,0)
+
+    for r_bullet in r_bullets:
+        pygame.draw.rect(screen,"red",r_bullet,0)
+
 
 
 while run == 1:
@@ -44,7 +57,24 @@ while run == 1:
     The_sprites.draw(screen)
     pygame.draw.line(screen,"black",(400,0),(400,800),5)
 
+    hbys = pygame.draw.rect(screen,"yellow",(20,20,20*health_bar_ys,20),0)
+
+    hbrs = pygame.draw.rect(screen,"red",(580,20,20*health_bar_rs,20),0)
+
+    hbrs.right = 780
+
+    handel_bullets()
+
     for event in pygame.event.get():
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                y_bullet = pygame.Rect(yellow_spaceship.rect.x,yellow_spaceship.rect.y,10,5)
+                y_bullets.append(y_bullet)
+
+            if event.key == pygame.K_RSHIFT:
+                r_bullet = pygame.Rect(red_spaceship.rect.x,red_spaceship.rect.y,10,5)
+                r_bullets.append(r_bullet)
+
         if event.type == pygame.QUIT:
             run = 0
     
@@ -73,8 +103,37 @@ while run == 1:
     if yellow_spaceship.rect.x < 0:
         yellow_spaceship.rect.x = 0
 
-    if yellow_spaceship.rect.x > 750:
-        yellow_spaceship.rect.x = 750
+    if yellow_spaceship.rect.x > 350:
+        yellow_spaceship.rect.x = 350
+
+
+
+
+
+    if keyspressed[pygame.K_RIGHT]:
+        red_spaceship.rect.x += 3
+
+    if keyspressed[pygame.K_LEFT]:
+        red_spaceship.rect.x += -3
+
+    if keyspressed[pygame.K_DOWN]:
+        red_spaceship.rect.y += 3
+
+    if keyspressed[pygame.K_UP]:
+        red_spaceship.rect.y += -3
+
+
+    if red_spaceship.rect.y < 0:
+        red_spaceship.rect.y = 0
+
+    if red_spaceship.rect.y > 750:
+        red_spaceship.rect.y = 750
+
+    if red_spaceship.rect.x < 400:
+        red_spaceship.rect.x = 400
+
+    if red_spaceship.rect.x > 750:
+        red_spaceship.rect.x = 750
 
 
 
