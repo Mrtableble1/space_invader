@@ -1,4 +1,5 @@
 import pygame
+pygame.init()
 
 HEIGHT = 800
 WIDTH = 800
@@ -30,11 +31,11 @@ class Spaceship(pygame.sprite.Sprite):
         self.rect.y = y
 
 yellow_spaceship = Spaceship(y_ss,200,400)
-health_bar_ys = 10
+health_bar_ys = 20
 y_bullets = []
 
 red_spaceship = Spaceship(r_ss,600,400)
-health_bar_rs = 10
+health_bar_rs = 20
 r_bullets = []
 
 The_sprites = pygame.sprite.Group()
@@ -43,13 +44,22 @@ The_sprites.add(red_spaceship)
 
 
 def handel_bullets():
+    global health_bar_ys,y_bullets,health_bar_rs,r_bullet
+
     for y_bullet in y_bullets:
         pygame.draw.rect(screen,"yellow",y_bullet,0)
+        y_bullet.x += 5
+        if y_bullet.colliderect(red_spaceship):
+            y_bullets.remove(y_bullet)
+            health_bar_rs -= 1
+        
 
     for r_bullet in r_bullets:
         pygame.draw.rect(screen,"red",r_bullet,0)
-
-
+        r_bullet.x -= 5
+        if r_bullet.colliderect(yellow_spaceship):
+            r_bullets.remove(r_bullet)
+            health_bar_ys -= 1
 
 while run == 1:
 
@@ -57,11 +67,10 @@ while run == 1:
     The_sprites.draw(screen)
     pygame.draw.line(screen,"black",(400,0),(400,800),5)
 
-    hbys = pygame.draw.rect(screen,"yellow",(20,20,20*health_bar_ys,20),0)
-
-    hbrs = pygame.draw.rect(screen,"red",(580,20,20*health_bar_rs,20),0)
-
+    hbys = pygame.draw.rect(screen,"yellow",(20,20,10*health_bar_ys,20),0)
+    hbrs = pygame.Rect(580,20,10*health_bar_rs,20)
     hbrs.right = 780
+    pygame.draw.rect(screen,"red",hbrs,0)
 
     handel_bullets()
 
@@ -70,27 +79,54 @@ while run == 1:
             if event.key == pygame.K_SPACE:
                 y_bullet = pygame.Rect(yellow_spaceship.rect.x,yellow_spaceship.rect.y,10,5)
                 y_bullets.append(y_bullet)
+                y_bullet = pygame.Rect(yellow_spaceship.rect.x,yellow_spaceship.rect.y+50,10,5)
+                y_bullets.append(y_bullet)
 
             if event.key == pygame.K_RSHIFT:
                 r_bullet = pygame.Rect(red_spaceship.rect.x,red_spaceship.rect.y,10,5)
                 r_bullets.append(r_bullet)
+                r_bullet = pygame.Rect(red_spaceship.rect.x,red_spaceship.rect.y+50,10,5)
+                r_bullets.append(r_bullet)
+
 
         if event.type == pygame.QUIT:
             run = 0
     
+    if health_bar_rs == 0 :
+        font = pygame.font.SysFont("Arial",50)
+        msg1 = font.render("yellow won the match!",True,"yellow")
+        screen.blit(msg1,(240,260))
+        pygame.display.update()
+        pygame.time.delay(5000)
+        run = 0
+
+    if health_bar_ys == 0:
+        font = pygame.font.SysFont("Arial",50)
+        msg1 = font.render("red won the match!",True,"red")
+        screen.blit(msg1,(240,260))
+        pygame.display.update()
+        pygame.time.delay(5000)
+        run = 0
+        
+        
+
+
+
     keyspressed = pygame.key.get_pressed()
 
 
-    if keyspressed[pygame.K_w]:
-        yellow_spaceship.rect.x += 3
 
-    if keyspressed[pygame.K_s]:
-        yellow_spaceship.rect.x += -3
-
-    if keyspressed[pygame.K_a]:
-        yellow_spaceship.rect.y += 3
 
     if keyspressed[pygame.K_d]:
+        yellow_spaceship.rect.x += 3
+
+    if keyspressed[pygame.K_a]:
+        yellow_spaceship.rect.x += -3
+
+    if keyspressed[pygame.K_w]:
+        yellow_spaceship.rect.y += 3
+
+    if keyspressed[pygame.K_s]:
         yellow_spaceship.rect.y += -3
 
 
